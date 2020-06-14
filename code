@@ -1,0 +1,72 @@
+#importing in the temperature data
+import pandas as pd
+data = pd.read_csv(r"C:\Users\benec\Downloads\IOT-Temp-in.csv", delimiter = ",")
+datalist = [list(row) for row in data.values]
+print(datalist[0:10])
+
+#importing with date and time data
+timedata = pd.read_csv(r"C:\Users\benec\Downloads\IOT-temp-in2.csv", delimiter = ",")
+timelist = [list(row) for row in timedata.values]
+print(timelist[0:10])
+
+#generating sample plots to visualise data (and possible outliers)
+
+import matplotlib.pyplot as plt
+
+#preparing data in x and y axis
+x = []
+y = []
+
+for i in datalist:
+    x.append(i[0])
+    y.append(i[1])
+    
+#plt.scatter(x, y, marker ='s')
+
+#line graph
+plt.plot(x, y)
+
+plt.xlabel('Time')
+plt.ylabel('Temperature')
+
+plt.title('Line graph of Temperatures')
+
+plt.show()
+
+#finding high indoor temperature anomalies/outliers
+import numpy as np
+import matplotlib.pyplot as plt
+
+anomalies = []
+
+# creating the function (one dimention dataset)
+def find_anomalies(random_data):
+    # Set upper and lower limit to 3 standard deviation
+    random_data_std = np.std(random_data)
+    random_data_mean = np.mean(random_data)
+    anomaly_cut_off = random_data_std * 3
+    
+    upper_limit = random_data_mean + anomaly_cut_off
+    # Generate outliers
+    for outlier in random_data:
+        if outlier > upper_limit:
+            anomalies.append(outlier)
+    return anomalies
+
+find_anomalies(y) 
+
+alert = []
+
+print(len(datalist))
+
+for i in datalist:
+        index = i[0]
+        index2 = index + 1
+        if index2 < (len(datalist)):
+            if i[index]<i[index2]:
+                alert.append(i[index2])
+            else:
+                break
+                
+if len(alert) == 5 and find_anomalies(y) in alert:
+    CALL SCDF
